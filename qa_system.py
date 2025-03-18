@@ -17,7 +17,7 @@ class QASystem:
         if self.model_provider == "openai":
             self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         elif self.model_provider == "gemini":
-            genai.configure(api_key="AIzaSyBMDq_gbGRB_CpNVJwcbep0uxMQkSDflyQ")
+            genai.configure(api_key="Your API Key")
             # 設置默認生成參數
             generation_config = {
                 "temperature": 0.7,
