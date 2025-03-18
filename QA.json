@@ -1,0 +1,61 @@
+{
+    "Question": "please briefly introduce the mechanic of HessianImportance",
+    "Answer": "The provided texts don't describe a method explicitly called \"HessianImportance\". However, they do discuss the importance of the Hessian matrix in neural network pruning.  Specifically, the diagonal elements of the Hessian matrix are used as indicators of parameter saliency.\n\n* **Optimal Brain Damage (OBD) [3]:** This method approximates the diagonal of the Hessian matrix.  A larger diagonal entry suggests that the corresponding weight is more important to the network's performance.  Pruning is then performed by removing weights with small Hessian values.  The computational cost of calculating the full Hessian is addressed by using an approximation based on random vectors and the gradient ([2], page 16).\n\n* **Growing Regularization [1, 4, 5]:** This method implicitly uses Hessian information without directly computing it. By increasing the L2 penalty uniformly, the response of different weights reveals information about their corresponding Hessian values. Weights with larger Hessian values are less affected by the increasing penalty, suggesting their importance ([4], page 4).  This allows for pruning without the explicit computation and inversion of the Hessian matrix ([4], page 4). The authors argue that this avoids the intractability issues associated with Hessian computation in deep networks ([5], page 1).\n\nBoth approaches utilize the Hessian (or information derived from it) to guide pruning decisions, aiming to remove less important weights while preserving performance.\n\n\n**Suggested Follow-Up Questions:**\n\n* What are the specific computational steps for approximating the Hessian diagonal in Optimal Brain Damage?\n* How does Growing Regularization avoid the need for explicitly calculating the Hessian matrix?\n* How do the pruning performance and computational costs of Optimal Brain Damage and Growing Regularization compare?\n* Are there other methods that utilize Hessian information for pruning, and how do they compare to these two approaches?\n",
+    "rag_chunks": [
+        "Notably, the whole process happens itself with the uniformly rising L2 penalty, no need to know the\nHessian values, thus not bothered by any issue arising from Hessian approximation in relevant prior\narts LeCun et al. (1990); Hassibi & Stork (1993); Wang et al. (2019a); Singh & Alistarh (2020).\nIn terms of the speciﬁc algorithm, all the penalty factor is increased at the same pace,\nλj = λj + δλ, for all j.\n(9)\n4",
+        "the Hessian can be approximated as:\ndiag(H) = E[v ⊙Hv] = E[v ⊙∇(∇C · v)],\n(13)\nwhere ⊙is the element-wise product, v are random vectors with entries ±1, and ∇is the gradient\noperator. To compute saliency with OBD, we randomly draw v and compute the diagonal over 10\niterations for a single minibatch for 1000 mini batches. We found that this number of mini batches is\nrequired to compute close approximation of the Hessian’s diagonal (which we veriﬁed). Computing\nsaliency this way is computationally expensive for iterative pruning, and we use a slightly different\nbut more efﬁcient procedure. Before the ﬁrst pruning iteration, saliency is initialized from values\ncomputed off-line with 1000 minibatches and 10 iterations, as described above. Then, at every\nminibatch we compute the OBD criteria with only one iteration and apply an exponential moving\naveraging with a coefﬁcient of 0.99. We veriﬁed that this computes a close approximation to the\nHessian’s diagonal.\nA.7",
+        "derivative of E with respect to the last-layer weighted BUms: \n{J{J2 ~ = 2!'(ai)2 - 2(di - Zi)!\"(ai) \nai \nfor all units i in the output layer. \n(8) \nAs can be seen, computing the diagonal Hessian is of the same order of complexity \nas computing the gradient. In some cases, the second term of the right hand side of \nthe last two equations (involving the second derivative of I) can be neglected. This \ncorresponds to the well-known Levenberg-Marquardt approximation, and has the \ninteresting property of giving guaranteed positive estimates of the second derivative.",
+        "(5)\nwhere I stands for the identity matrix. Here we meet with the common problem of estimating\nHessian and its inverse, which are well-known to be intractable for deep neural networks. We\nexplore two simpliﬁed cases to help us move forward.\n(1) H is diagonal, which is a common simpliﬁcation for Hessian LeCun et al. (1990), implying that\nthe weights are independent of each other. For w∗\ni with second derivative hii. With L2 penalty\nincreased by δλ (δλ > 0), the new converged weights can be proved to be\nˆw∗\ni =\nhii\nhii + δλw∗\ni , ⇒ri = ˆw∗\ni\nw∗\ni\n=\n1\nδλ/hii + 1,\n(6)\nwhere ri ∈[0, 1) since hii ≥0 and δλ > 0. As seen, larger hii results in larger ri (closer to 1),\nmeaning that the weight is relatively less moved towards the origin. Our second algorithm pri-\nmarily builds upon this ﬁnding, which implies when we add a penalty perturbation to the converged\nnetwork, the way that different weights respond can reﬂect their underlying Hessian information.",
+        "later barely hurts the performance even if the simple weight magnitude is adopted as criterion. (2)\nIt is well-known that different weights of a neural network lie on the regions with different local\nquadratic structures, i.e., Hessian information. Many methods try to tap into this to build a more\naccurate scoring LeCun et al. (1990); Hassibi & Stork (1993); Wang et al. (2019a); Singh & Al-\nistarh (2020). However, for deep networks, it is especially hard to estimate Hessian. Sometimes,\neven the computing itself can be intractable without resorting to proper approximation Wang et al.\n(2019a). On this problem, we ask: Is it possible to exploit the Hessian information without knowing\ntheir speciﬁc values? This is the second scenario where a growing regularization can help. We will\n1\narXiv:2012.09243v2  [cs.CV]  5 Apr 2021"
+    ],
+    "references": [
+        {
+            "title": "Published as a conference paper at ICLR 2021",
+            "authors": "Huan Wang, Can Qin, Yulun Zhang, Yun Fu",
+            "source": "NEURAL PRUNING VIA GROWING REGULARIZATION.pdf",
+            "page": 4
+        },
+        {
+            "title": "Published as a conference paper at ICLR 2017",
+            "authors": "Pavlo Molchanov, Stephen Tyree, Tero Karras, Timo Aila, Jan Kautz",
+            "source": "PRUNING CONVOLUTIONAL NEURAL NETWORKS.pdf",
+            "page": 16
+        },
+        {
+            "title": "Optimal Brain Damage",
+            "authors": "Yann LeCun, John S. Denker, Sara A. Solla",
+            "source": "NIPS-1989-optimal-brain-damage-Paper.pdf",
+            "page": 4
+        },
+        {
+            "title": "Published as a conference paper at ICLR 2021",
+            "authors": "Huan Wang, Can Qin, Yulun Zhang, Yun Fu",
+            "source": "NEURAL PRUNING VIA GROWING REGULARIZATION.pdf",
+            "page": 4
+        },
+        {
+            "title": "Published as a conference paper at ICLR 2021",
+            "authors": "Huan Wang, Can Qin, Yulun Zhang, Yun Fu",
+            "source": "NEURAL PRUNING VIA GROWING REGULARIZATION.pdf",
+            "page": 1
+        }
+    ],
+    "conversation_history": [
+        {
+            "role": "user",
+            "content": "what is the benchmark of NIPS-1989-optimal-brain-damage-Paper"
+        },
+        {
+            "role": "assistant",
+            "content": "The provided text from the NIPS 1989 paper \"Optimal Brain Damage\" by LeCun, Denker, and Solla doesn't explicitly mention a specific benchmark dataset used for evaluating the proposed method.  While the paper discusses the problem of generalization and mentions using a mean-squared error (MSE) objective function ([4], page 4), it doesn't name the dataset used to calculate this error. The authors do mention previous work and applications where their backpropagation method has been utilized ([4], page 4), citing Becker and Le Cun (1989), Le Cun (1989), and Le Cun et al. (1990a), but without specifying datasets tied to the \"Optimal Brain Damage\" method itself.  Figure 1b ([1], page 6) shows the objective function decreasing as parameters are removed, but again, the data used to generate this figure isn't named.\n\n**Suggested Follow-Up Questions:**\n\n* Could the cited works (Becker and Le Cun, 1989; Le Cun, 1989; Le Cun et al., 1990a) reveal the datasets used?\n* Does the later work by LeCun et al. (1990) mentioned in [3] (page 5) regarding \"Optimal Brain Damage\" specify a benchmark?\n"
+        },
+        {
+            "role": "user",
+            "content": "please briefly introduce the mechanic of HessianImportance"
+        },
+        {
+            "role": "assistant",
+            "content": "The provided texts don't describe a method explicitly called \"HessianImportance\". However, they do discuss the importance of the Hessian matrix in neural network pruning.  Specifically, the diagonal elements of the Hessian matrix are used as indicators of parameter saliency.\n\n* **Optimal Brain Damage (OBD) [3]:** This method approximates the diagonal of the Hessian matrix.  A larger diagonal entry suggests that the corresponding weight is more important to the network's performance.  Pruning is then performed by removing weights with small Hessian values.  The computational cost of calculating the full Hessian is addressed by using an approximation based on random vectors and the gradient ([2], page 16).\n\n* **Growing Regularization [1, 4, 5]:** This method implicitly uses Hessian information without directly computing it. By increasing the L2 penalty uniformly, the response of different weights reveals information about their corresponding Hessian values. Weights with larger Hessian values are less affected by the increasing penalty, suggesting their importance ([4], page 4).  This allows for pruning without the explicit computation and inversion of the Hessian matrix ([4], page 4). The authors argue that this avoids the intractability issues associated with Hessian computation in deep networks ([5], page 1).\n\nBoth approaches utilize the Hessian (or information derived from it) to guide pruning decisions, aiming to remove less important weights while preserving performance.\n\n\n**Suggested Follow-Up Questions:**\n\n* What are the specific computational steps for approximating the Hessian diagonal in Optimal Brain Damage?\n* How does Growing Regularization avoid the need for explicitly calculating the Hessian matrix?\n* How do the pruning performance and computational costs of Optimal Brain Damage and Growing Regularization compare?\n* Are there other methods that utilize Hessian information for pruning, and how do they compare to these two approaches?\n"
+        }
+    ]
+}
